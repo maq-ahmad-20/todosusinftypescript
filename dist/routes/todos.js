@@ -7,15 +7,17 @@ router.get('/', (req, res, next) => {
     res.status(200).json({ todos: todos });
 });
 router.post('/todo', (req, res, next) => {
+    const body = req.body;
     const newTodo = {
         id: new Date().toISOString(),
-        text: req.body
+        text: body.text
     };
     todos.push(newTodo);
     res.status(200).json({ success: true, todos: newTodo });
 });
 router.post('/delete/:id', (req, res, next) => {
-    const toDoIndes = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params;
+    const toDoIndes = todos.findIndex(todo => todo.id === params.id);
     if (toDoIndes >= 0) {
         todos.splice(toDoIndes, 1);
         res.status(200).json({ success: true });
@@ -25,10 +27,12 @@ router.post('/delete/:id', (req, res, next) => {
     }
 });
 router.post('/edit/:id', (req, res, next) => {
-    const toDoindex = todos.findIndex(todo => todo.id === req.params.id);
+    const params = req.params;
+    const toDoindex = todos.findIndex(todo => todo.id === params.id);
+    const body = req.body;
     const updatedTodo = {
-        id: req.params.id,
-        text: req.body
+        id: params.id,
+        text: body.text
     };
     if (toDoindex >= 0) {
         todos[toDoindex] = updatedTodo;
@@ -37,5 +41,8 @@ router.post('/edit/:id', (req, res, next) => {
     else {
         res.status(404).json({ Message: "Not valid id for to do. Item not found " });
     }
+});
+router.get('/getAlltodo', (req, res, next) => {
+    return res.json(200).json({ allTodo: todos });
 });
 exports.default = router;
